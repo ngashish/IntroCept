@@ -34,10 +34,12 @@ export class CrudService {
      * if its new only in that case data will be add in csv file.
      */
     async createUser(user: User): Promise<any> {
+        console.log('user :',user);
         const isUserExist = await this.checkUserExist(user.email);
         if (isUserExist.status) {
             return isUserExist;
         }
+        console.log('isUserExist :',isUserExist);
         try {
             const csvWriter = this.csvWriterObject(true);
             return csvWriter.writeRecords([this.user.setCsvData(user)])
@@ -66,8 +68,7 @@ export class CrudService {
     async getUsers(): Promise<any> {
         try {
             const stream = fs.createReadStream(`${this.config.get<string>('database')}data.csv`);
-            const entities: any = await this.csvParser.parse(stream, User, null, null, { separator: ',', mapHeaders: ({ header }) => header.split(' ').join('_') });
-            console.log('entities :',entities);
+            const entities: any = await this.csvParser.parse(stream, User, null, null, { separator: ',', mapHeaders: ({ header }) => header.split(' ').join('_') });            
             if (entities) {
                 return {
                     status: true,
@@ -117,11 +118,11 @@ export class CrudService {
      * @param id : user id whose data is going to update.
      * @param updatedUser : new updated payload sent fro user.
      */
-    async updateUserById(id: string, updatedUser: User): Promise<any> {
+    async updateUserByEmail(updatedUser: User): Promise<any> {
         const stream = await fs.createReadStream(`${this.config.get<string>('database')}data.csv`);
         const { list } = await this.csvParser.parse(stream, User, null, null, { separator: ',', mapHeaders: ({ header }) => header.split(' ').join('_') });
         const updatedUserList = list.map((user, index) => {
-            if (index === (parseInt(id) - 1)) {
+            if (user.Email === updatedUser.email) {
                 return user = this.user.setCsvData(updatedUser)
             } else {
                 return user;
@@ -154,8 +155,7 @@ export class CrudService {
             list.splice(parseInt(id) - 1, 1);
             const csvWriter = this.csvWriterObject(false);
             return csvWriter.writeRecords(list)
-                .then((data) => {
-                    console.log('data :', data);
+                .then((data) => {                    
                     return {
                         status: true,
                         message: "User deleted Successfully",
@@ -179,8 +179,7 @@ export class CrudService {
         try {
             const stream = await fs.createReadStream(`${this.config.get<string>('database')}data.csv`);
             const { list } = await this.csvParser.parse(stream, User, null, null, { separator: ',', mapHeaders: ({ header }) => header.split(' ').join('_') });
-            const selectedUser = list.filter((user) => {
-                console.log(user.Email, '===', email)
+            const selectedUser = list.filter((user) => {                
                 if (user.Email === email) {
                     return user;
                 }

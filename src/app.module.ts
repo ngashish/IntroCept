@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CrudModule } from './crud_module/crud.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configration from './config/config';
-import * as fs from 'fs';;
+import * as fs from 'fs';
 @Module({
   imports: [CrudModule, ConfigModule.forRoot({
     load: [configration]

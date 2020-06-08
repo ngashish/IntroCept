@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Body, Res, Put, Param, Delete } from '@nestjs/common';
-import { Response } from 'express';
+import { Controller, Get, Post, Body, Res, Put, Param, Delete, Req } from '@nestjs/common';
+import { Response, Request } from 'express';
 
 import { User } from '../../data_transfer_object/user_dto';
 import { CrudService } from '../../services/crud/crud.service';
@@ -32,14 +32,16 @@ export class CrudController {
     }
 
     /**
+     * .bo
      * 
      * @param user : payload coming to api that contain infromation about new user .
      * @param res      
      */
-    @Post('/')
-    async create(@Body() user: User, @Res() res: Response): Promise<any> {
+    @Post('/add')
+    async create(@Body() user: User,@Req() req: Request, @Res() res: Response): Promise<any> {
+        console.log('hi :',req.body)
         const response = await this.crudService.createUser(user);
-        this.formatResponse(res, response);
+        this.formatResponse(res, response);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
     }
 
     /**
@@ -59,9 +61,9 @@ export class CrudController {
      * @param user : new payload provided to update existing user data.
      * @param res 
      */
-    @Put('/:id')
-    async updateUser(@Param('id') id: string, @Body() user: User, @Res() res: Response): Promise<any> {
-        const response = await this.crudService.updateUserById(id, user);
+    @Put('/update')
+    async updateUser(@Body() user: User, @Res() res: Response): Promise<any> {
+        const response = await this.crudService.updateUserByEmail(user);
         this.formatResponse(res, response);
 
     }
@@ -71,7 +73,7 @@ export class CrudController {
      * @param id : holds user id to delete record
      * @param res 
      */
-    @Delete('/:id')
+    @Delete('/delete/:id')
     async deleteUserById(@Param('id') id: string, @Res() res: Response): Promise<any> {
         const response = await this.crudService.deleteUserById(id);
         this.formatResponse(res, response);
