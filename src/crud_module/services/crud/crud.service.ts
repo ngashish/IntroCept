@@ -20,7 +20,7 @@ export class CrudService {
     csvWriterObject(append: boolean): any {
         console.log(this.config.get<string>('database'))
         const csvWriter = createObjectCsvWriter({
-            path: `${this.config.get<string>('database')}data.csv`,
+            path: `${this.config.get<string>('database')}file.csv`,
             header: this.user.csvHeader(),
             append,
         });
@@ -67,7 +67,7 @@ export class CrudService {
      */
     async getUsers(): Promise<any> {
         try {
-            const stream = fs.createReadStream(`${this.config.get<string>('database')}data.csv`);
+            const stream = fs.createReadStream(`${this.config.get<string>('database')}file.csv`);
             const entities: any = await this.csvParser.parse(stream, User, null, null, { separator: ',', mapHeaders: ({ header }) => header.split(' ').join('_') });            
             if (entities) {
                 return {
@@ -93,7 +93,7 @@ export class CrudService {
      * function take id as argument in service and return a whole information fro file.
      */
     async getUserById(id: string): Promise<any> {
-        const stream = await fs.createReadStream(`${this.config.get<string>('database')}data.csv`);
+        const stream = await fs.createReadStream(`${this.config.get<string>('database')}file.csv`);
         try {
             const { list } = await this.csvParser.parse(stream, User, null, null, { separator: ',', mapHeaders: ({ header }) => header.split(' ').join('_') });
             const selectedUser = list.filter((user, index) => {
@@ -119,7 +119,7 @@ export class CrudService {
      * @param updatedUser : new updated payload sent fro user.
      */
     async updateUserByEmail(updatedUser: User): Promise<any> {
-        const stream = await fs.createReadStream(`${this.config.get<string>('database')}data.csv`);
+        const stream = await fs.createReadStream(`${this.config.get<string>('database')}file.csv`);
         const { list } = await this.csvParser.parse(stream, User, null, null, { separator: ',', mapHeaders: ({ header }) => header.split(' ').join('_') });
         const updatedUserList = list.map((user, index) => {
             if (user.Email === updatedUser.email) {
@@ -142,14 +142,13 @@ export class CrudService {
                 };
             });
     }
-
     /**
      * 
      * @param id : user id which need to be delete.
      * this function receive id as parameter and delete whole record from database.
      */
     async deleteUserById(id: string): Promise<any> {
-        const stream = await fs.createReadStream(`${this.config.get<string>('database')}data.csv`);
+        const stream = await fs.createReadStream(`${this.config.get<string>('database')}file.csv`);
         try {
             const { list } = await this.csvParser.parse(stream, User, null, null, { separator: ',', mapHeaders: ({ header }) => header.split(' ').join('_') });
             list.splice(parseInt(id) - 1, 1);
@@ -177,7 +176,7 @@ export class CrudService {
      */
     async checkUserExist(email: string): Promise<any> {
         try {
-            const stream = await fs.createReadStream(`${this.config.get<string>('database')}data.csv`);
+            const stream = await fs.createReadStream(`${this.config.get<string>('database')}file.csv`);
             const { list } = await this.csvParser.parse(stream, User, null, null, { separator: ',', mapHeaders: ({ header }) => header.split(' ').join('_') });
             const selectedUser = list.filter((user) => {                
                 if (user.Email === email) {

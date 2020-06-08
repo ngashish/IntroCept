@@ -26,6 +26,8 @@
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
     "csv-writer": "^1.6.0",
+    "express": "^4.17.1",
+    "json2csv": "^5.0.1",
     "nest-csv-parser": "^2.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
